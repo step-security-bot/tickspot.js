@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
-const { TOGGL_API_TOKEN, TOGGL_BASE_URL } = process.env;
 
-export { TOGGL_API_TOKEN, TOGGL_BASE_URL };
+const { TICK_BASE_URL_START } = process.env;
+
+export default { TICK_BASE_URL_START };
