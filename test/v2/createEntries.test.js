@@ -1,10 +1,12 @@
 import axios from 'axios';
 import tickspot from '#src/index';
-import createResponse from '#test/v2/fixture/entries/createResponse';
+import responseFactory from '#test/v2/fixture/responseFactory';
 import userInfo from '#test/v2/fixture/client';
+import dataSuccessful from './fixture/entries/createResponseData.js';
 
 jest.mock('axios');
 const client = tickspot({ apiVersion: 2, ...userInfo });
+const createEntriesUrl = 'https://www.tickspot.com/114217/api/v2/entries.json';
 
 describe('createTickEntries', () => {
   const dataEntry = {
@@ -15,7 +17,9 @@ describe('createTickEntries', () => {
   };
 
   describe('when API call is successful', () => {
-    const succesfulResponse = createResponse(dataEntry, 'succesful');
+    const succesfulResponse = responseFactory(dataEntry, 'create',
+      dataSuccessful, createEntriesUrl);
+
     beforeEach(() => {
       axios.post.mockResolvedValueOnce(succesfulResponse);
     });
@@ -36,7 +40,8 @@ describe('createTickEntries', () => {
 
   describe('when create method returns an error', () => {
     it('Should reject with an error when authentication fails', async () => {
-      const authenticationError = createResponse(dataEntry, 'authenticationError');
+      const authenticationError = responseFactory(dataEntry, 'authenticationError',
+        {}, createEntriesUrl);
       axios.post.mockRejectedValueOnce(authenticationError);
       const response = await client.entries.create(dataEntry);
 
@@ -45,7 +50,8 @@ describe('createTickEntries', () => {
 
     it('Should reject with an error when hours data missed', async () => {
       const dataEntryMissed = { ...dataEntry, hours: null };
-      const dataMissedError = createResponse(dataEntryMissed, 'dataMissedError');
+      const dataMissedError = responseFactory(dataEntryMissed, 'dataMissedError',
+        {}, createEntriesUrl);
       axios.post.mockRejectedValue(dataMissedError);
       const response = await client.entries.create(dataEntryMissed);
 
@@ -54,7 +60,8 @@ describe('createTickEntries', () => {
 
     it('Should reject with an error when taskId data missed', async () => {
       const dataEntryMissed = { ...dataEntry, taskId: null };
-      const dataMissedError = createResponse(dataEntryMissed, 'dataMissedError');
+      const dataMissedError = responseFactory(dataEntryMissed, 'dataMissedError',
+        {}, createEntriesUrl);
       axios.post.mockRejectedValue(dataMissedError);
       const response = await client.entries.create(dataEntryMissed);
 
