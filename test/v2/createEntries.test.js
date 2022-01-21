@@ -1,12 +1,12 @@
 import axios from 'axios';
 import tickspot from '#src/index';
-import responseFactory from '#test/v2/fixture/responseFactory';
+import responseFactory from '#test/v2/factories/responseFactory';
 import userInfo from '#test/v2/fixture/client';
 import dataSuccessful from './fixture/entries/createResponseData.js';
 
 jest.mock('axios');
 const client = tickspot({ apiVersion: 2, ...userInfo });
-const createEntriesUrl = 'https://www.tickspot.com/114217/api/v2/entries.json';
+const createEntriesUrl = 'https://www.tickspot.com/123456/api/v2/entries.json';
 
 describe('createTickEntries', () => {
   const dataEntry = {
@@ -17,7 +17,7 @@ describe('createTickEntries', () => {
   };
 
   describe('when API call is successful', () => {
-    const succesfulResponse = responseFactory(dataEntry, 'create',
+    const succesfulResponse = responseFactory(dataEntry, 'created',
       dataSuccessful, createEntriesUrl);
 
     beforeEach(() => {
@@ -51,7 +51,7 @@ describe('createTickEntries', () => {
     it('Should reject with an error when hours data missed', async () => {
       const dataEntryMissed = { ...dataEntry, hours: null };
       const dataMissedError = responseFactory(dataEntryMissed, 'dataMissedError',
-        {}, createEntriesUrl);
+        {}, createEntriesUrl, 'post');
       axios.post.mockRejectedValue(dataMissedError);
       const response = await client.entries.create(dataEntryMissed);
 

@@ -1,16 +1,17 @@
 import axios from 'axios';
 import tickspot from '#src/index';
-import responseFactory from '#test/v2/fixture/responseFactory';
+import responseFactory from '#test/v2/factories/responseFactory';
 import userInfo from '#test/v2/fixture/client';
-import { dataEntrySuccessful, dataEntryNotFound } from './fixture/entries/getEntryResponseData.js';
+import dataEntrySuccessful from './fixture/entries/getEntryResponseData';
+import { notFoundResponse } from './fixture/shared/responseData';
 
 jest.mock('axios');
 const client = tickspot({ apiVersion: 2, ...userInfo });
-const getEntryUrl = 'https://www.tickspot.com/114217/api/v2/entries/123456.json';
+const getEntryUrl = 'https://www.tickspot.com/123456/api/v2/entries/123456.json';
 
 describe('getEntry', () => {
   describe('when API call is successful', () => {
-    const responseData = responseFactory({}, 'succesful', dataEntrySuccessful, getEntryUrl);
+    const responseData = responseFactory({}, 'successful', dataEntrySuccessful, getEntryUrl);
 
     beforeEach(() => {
       axios.get.mockResolvedValueOnce(responseData);
@@ -35,7 +36,7 @@ describe('getEntry', () => {
   });
 
   describe('when API call does not find a resource', () => {
-    const responseData = responseFactory({}, 'notFound', dataEntryNotFound, getEntryUrl);
+    const responseData = responseFactory({}, 'notFound', notFoundResponse, getEntryUrl);
 
     beforeEach(() => {
       axios.get.mockResolvedValueOnce(responseData);

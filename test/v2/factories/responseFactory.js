@@ -3,19 +3,19 @@ import responseGenerator from './responseGenerator.js';
 const messageTimeMissed = { errors: 'field is missing' };
 const auth = 'Token token=12345akeu785asd45ac48';
 
-const responseFactory = (dataEntry, responseType, apiResponseData, url) => {
+const responseFactory = (dataEntry, responseType, apiResponseData, url, method = 'get') => {
   switch (responseType) {
-    case 'create':
+    case 'created':
       return responseGenerator(url, 201, 'Created',
         'post', dataEntry, apiResponseData, auth);
 
-    case 'succesful':
+    case 'successful':
       return responseGenerator(url, 200, 'OK',
-        'get', dataEntry, apiResponseData, auth);
+        method, dataEntry, apiResponseData, auth);
 
     case 'notFound':
       return responseGenerator(url, 404, 'Not Found',
-        'get', dataEntry, apiResponseData, auth);
+        method, dataEntry, apiResponseData, auth);
 
     case 'authenticationError':
       return {
@@ -28,7 +28,7 @@ const responseFactory = (dataEntry, responseType, apiResponseData, url) => {
       return {
         response:
           responseGenerator(url, 422, 'Unprocessable Entity',
-            'post', dataEntry, messageTimeMissed, auth),
+            method, dataEntry, messageTimeMissed, auth),
       };
 
     default:
