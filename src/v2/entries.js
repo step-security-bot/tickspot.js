@@ -8,12 +8,15 @@ import axios from 'axios';
 export default class Entries {
   constructor({ auth, baseURL, agentEmail }) {
     this.baseURL = baseURL;
-    this.auth = auth;
-    this.USER_AGENT_EMAIL = agentEmail;
+    this.DEFAULT_HEADERS = {
+      Authorization: auth,
+      'User-Agent':
+      `tickspot.js (${agentEmail})`,
+    };
   }
 
   /**
- * Create Toggl Entries
+ * Create Tick Entries
  * @param {object} {} is an object with the data entry. The following are the object keys:
  * date
  * hours: required*
@@ -30,8 +33,8 @@ export default class Entries {
     taskId,
     userId,
   }, dataCallback) {
-    if (!hours) return new Error('hours field is missing');
-    if (!taskId) return new Error('taskId field is missing');
+    if (!hours) throw new Error('hours field is missing');
+    if (!taskId) throw new Error('taskId field is missing');
 
     const dataEntry = {
       date,
@@ -42,12 +45,62 @@ export default class Entries {
     };
     const URL = `${this.baseURL}/entries.json`;
 
-    const response = await axios.post(URL, dataEntry,
-      {
-        headers:
-        { Authorization: this.auth, 'User-Agent': `Toggltickjs (${this.USER_AGENT_EMAIL})` },
-      })
-      .catch((error) => error.response);
+    const response = await axios.post(
+      URL,
+      dataEntry,
+      { headers: this.DEFAULT_HEADERS },
+    )
+      .catch((error) => {
+        throw new Error(error?.response?.data ?? error?.response ?? error);
+      });
+
+    return dataCallback ? dataCallback(response.data) : response.data;
+  }
+
+  /**
+ * List Tick Entries
+ * @param {object} {} is an object with the params to get the entries.
+ * The following are the object keys:
+ * startDate: required*
+ * endDate: required*
+ * userId: will be ignored if the user is not an administrator
+ * projectId
+ * taskId
+ * billable
+ * billed
+ * @param {callback} dataCallback is an optional callback to handle the output data.
+ * @returns array with the list entries or an error is a required field is missing.
+ */
+  async list({
+    startDate,
+    endDate,
+    userId,
+    projectId,
+    taskId,
+    billable,
+    billed,
+  }, dataCallback) {
+    if (!startDate) throw new Error('startDate field is missing');
+    if (!endDate) throw new Error('endDate field is missing');
+
+    const params = {
+      start_date: startDate,
+      end_date: endDate,
+      user_id: userId,
+      billable,
+      project_id: projectId,
+      billed,
+      task_id: taskId,
+    };
+    const URL = `${this.baseURL}/entries.json`;
+
+    const response = await axios.get(
+      URL,
+      { headers: this.DEFAULT_HEADERS, params },
+    )
+      .catch((error) => {
+        throw new Error(error?.response?.data ?? error?.response ?? error);
+      });
 
     return dataCallback ? dataCallback(response.data) : response.data;
   }
@@ -65,10 +118,7 @@ export default class Entries {
     const URL = `${this.baseURL}/entries/${entryId}.json`;
 
     const response = await axios.get(URL,
-      {
-        headers:
-        { Authorization: this.auth, 'User-Agent': `tickspot.js (${this.USER_AGENT_EMAIL})` },
-      })
+      { headers: this.DEFAULT_HEADERS })
       .catch((error) => { throw new Error(`Request Error: ${error.response.status}`); });
 
     return dataCallback ? dataCallback(response.data) : response.data;
@@ -110,10 +160,7 @@ export default class Entries {
     const URL = `${this.baseURL}/entries/${entryId}.json`;
 
     const response = await axios.put(URL, dataEntry,
-      {
-        headers:
-        { Authorization: this.auth, 'User-Agent': `tickspot.js (${this.USER_AGENT_EMAIL})` },
-      })
+      { headers: this.DEFAULT_HEADERS })
       .catch((error) => { throw new Error(`Request Error: ${error.response.status}`); });
 
     return dataCallback ? dataCallback(response.data) : response.data;

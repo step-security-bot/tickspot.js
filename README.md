@@ -56,9 +56,41 @@ With the entries module you can use the following methods:
     };
   };
 
-  client.entries.create(data, dataCallback);
+  client.entries.create(data, callback);
   ```
   The create method returns a promise with the response data from the tickspot API or with your custom output data handled with the callback.
+
+- List
+
+  The list method returns a list of entries between two dates with the following data:
+  - startDate: required*
+  - endDate: required*
+  - user_id: will be ignored if the user is not an administrator
+
+  Optionally, you can add a callback to handle the response data from the tickspot API.
+
+  For example:
+  ```javascript
+  ...
+  const params = {
+    startDate: '2021-11-08',
+    endDate: '2021-11-09',
+  };
+
+  const callback = (dataResponse) => dataResponse.map((entry) => {
+    const date = new Date(entry.date);
+    return ({
+      id: entry.id,
+      notes: entry.notes,
+      day: date.getDate(),
+      month: date.getMonth(),
+      year: date.getFullYear(),
+    });
+  });
+
+  client.entries.list(params, callback);
+  ```
+  The list method returns a promise with the response data from the tickspot API or with your custom output data handled with the callback.
 
 - getEntry
 

@@ -5,6 +5,7 @@ import userInfo from '#test/v2/fixture/client';
 import dataSuccessful from './fixture/entries/createResponseData.js';
 
 jest.mock('axios');
+jest.mock('#config', () => 'TICK_BASE_URL_START');
 const client = tickspot({ apiVersion: 2, ...userInfo });
 const createEntriesUrl = 'https://www.tickspot.com/123456/api/v2/entries.json';
 
@@ -43,9 +44,8 @@ describe('createTickEntries', () => {
       const authenticationError = responseFactory(dataEntry, 'authenticationError',
         {}, createEntriesUrl);
       axios.post.mockRejectedValueOnce(authenticationError);
-      const response = await client.entries.create(dataEntry);
 
-      expect(response).toBe(authenticationError.response.data);
+      await expect(client.entries.create(dataEntry)).rejects.toThrow('authenticationError');
     });
 
     it('Should reject with an error when hours data missed', async () => {
@@ -53,9 +53,10 @@ describe('createTickEntries', () => {
       const dataMissedError = responseFactory(dataEntryMissed, 'dataMissedError',
         {}, createEntriesUrl, 'post');
       axios.post.mockRejectedValue(dataMissedError);
-      const response = await client.entries.create(dataEntryMissed);
 
-      expect(response).toEqual(new Error('hours field is missing'));
+      await expect(
+        client.entries.create(dataEntryMissed),
+      ).rejects.toThrow('hours field is missing');
     });
 
     it('Should reject with an error when taskId data missed', async () => {
@@ -63,9 +64,10 @@ describe('createTickEntries', () => {
       const dataMissedError = responseFactory(dataEntryMissed, 'dataMissedError',
         {}, createEntriesUrl);
       axios.post.mockRejectedValue(dataMissedError);
-      const response = await client.entries.create(dataEntryMissed);
 
-      expect(response).toEqual(new Error('taskId field is missing'));
+      await expect(
+        client.entries.create(dataEntryMissed),
+      ).rejects.toThrow('taskId field is missing');
     });
   });
 });
