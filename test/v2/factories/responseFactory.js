@@ -3,36 +3,40 @@ import responseGenerator from './responseGenerator.js';
 const messageTimeMissed = { errors: 'field is missing' };
 const auth = 'Token token=12345akeu785asd45ac48';
 
-const responseFactory = (dataEntry, responseType, apiResponseData, url, method = 'get') => {
+const responseFactory = ({
+  requestData, responseType, responseData, URL, method = 'get',
+}) => {
   switch (responseType) {
-    case 'created':
-      return responseGenerator(url, 201, 'Created',
-        'post', dataEntry, apiResponseData, auth);
-
     case 'successful':
-      return responseGenerator(url, 200, 'OK',
-        method, dataEntry, apiResponseData, auth);
+      return responseGenerator(URL, 200, 'OK',
+        method, requestData, responseData, auth);
+
+    case 'created':
+      return responseGenerator(URL, 201, 'Created',
+        'post', requestData, responseData, auth);
 
     case 'successfulNoContent':
-      return responseGenerator(url, 204, 'No Content',
-        method, dataEntry, apiResponseData, auth);
-
-    case 'notFound':
-      return responseGenerator(url, 404, 'Not Found',
-        method, dataEntry, apiResponseData, auth);
+      return responseGenerator(URL, 204, 'No Content',
+        method, requestData, responseData, auth);
 
     case 'authenticationError':
       return {
         response:
-          responseGenerator(url, 401, 'Bad credentials or user agent',
-            'post', dataEntry, 'authenticationError', null),
+          responseGenerator(URL, 401, 'Bad credentials or user agent',
+            'post', requestData, 'authenticationError', null),
       };
 
-    case 'dataMissedError':
+    case 'notFound':
+      return {
+        response: responseGenerator(URL, 404, 'Not Found',
+          method, requestData, responseData, auth),
+      };
+
+    case 'unprocessableEntity':
       return {
         response:
-          responseGenerator(url, 422, 'Unprocessable Entity',
-            method, dataEntry, messageTimeMissed, auth),
+          responseGenerator(URL, 422, 'Unprocessable Entity',
+            method, requestData, messageTimeMissed, auth),
       };
 
     default:

@@ -1,5 +1,6 @@
-import TICK_BASE_URL_START from '#config';
-import Entries from './entries.js';
+import TICK_BASE_URL_START from './constants.js';
+import Entries from './resources/entries.js';
+import Tasks from './resources/tasks.js';
 
 /**
  * Client module for tickspor v2 API, it is the main class.
@@ -14,5 +15,6 @@ export default class Client {
     this.auth = `Token token=${apiToken}`;
 
     this.entries = new Entries({ auth: this.auth, baseURL: this.baseURL, agentEmail });
+    this.tasks = new Tasks({ auth: this.auth, baseURL: this.baseURL, agentEmail });
   }
 }

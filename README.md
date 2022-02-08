@@ -1,182 +1,411 @@
 # Tickspot.js
+
 Tickspot.js is a Node.js client for [tickspot api](https://github.com/tick/tick-api).
 
 ## Installation
 
-### Install via NPM
-Get the package
+Get the package via npm
 
 ```shell
 $ npm i tickspot.js
 ```
 
-Include the client in your application
-
-```javascript
-import tickspot from 'tickspot.js';
-```
 ## Usage
-Call the tickspot method with the api version, your subscription id, api token and user-agent email, it will return a client instance.
+
+To use tickspot.js client, just import the tickspot module as following:
 
 ```javascript
-const client = tickspot({ apiVersion: 2, subscriptionId: 'subscriptionId', apiToken: 'apiToken', agentEmail: 'agentEmail' })
+import tickspot from "tickspot.js";
+```
+
+Once the module is imported, create an instance using the `tickspot` function. This function will require the following data:
+
+- `apiVersion` - This is version of the Tick API.
+- `subscriptionId` and `apiToken` - Those are unique data that you will find in your Tickspot profile.
+- `agentEmail` - Your email.
+
+```javascript
+const client = tickspot({
+  apiVersion: 2,
+  subscriptionId: "subscriptionId",
+  apiToken: "apiToken",
+  agentEmail: "agentEmail",
+});
 ```
 
 ### Entries
-With the entries module you can use the following methods:
-- Create
 
-  The create method creates an entry with the following data:
-  - date
-  - hours: required*
-  - notes: entry description
-  - task_id: required*
-  - user_id: will be ignored if the user is not an administrator
+This module allows you to interact with the Tickspot entries.
 
-  Optionally, you can add a callback to handle the response data from the tickspot API.
+#### List Entries
 
-  For example:
-  ```javascript
+This will return all time entries that meet the provided parameters. You can send some params to filter the response, those params are the following:
+
+- [Required] startDate. The format is: 'YYYY-MM-DD'.
+- [Required] endDate. The format is: 'YYYY-MM-DD'.
+- [Optional] userId, will be ignored if the user is not an administrator.
+- [Optional] taskId, related parent task.
+- [Optional] userId, will be ignored if the user is not an administrator.
+- [Optional] billable.
+- [Optional] billed.
+
+The create method returns a promise with the response data from the tickspot API.
+
+```javascript
+const params = {
+  startDate: "2021-11-08",
+  endDate: "2021-11-09",
+  billable: true,
+};
+
+const result = await client.entries.list(params);
+
+// The result would be something like the following:
+[
+  {
+    id: 1,
+    date: "2014-09-17",
+    hours: 2.88,
+    notes: "Example Entry.",
+    task_id: 24,
+    user_id: 4,
+    url: "https://www.tickspot.com/api/v2/123/entries/1.json",
+    created_at: "2021-11-08T15:03:19.000-04:00",
+    updated_at: "2021-11-08T15:03:19.000-04:00"
+  },
   ...
-  const data = {
-    date: '2021-12-01',
-    hours: 2,
-    notes: 'Entry description',
-    taskId: 12345678,
-  };
+]
+```
 
-  const callback = (dataResponse) => {
-    const date = new Date(dataResponse.date);
-    return {
-      EntryDate: {
-        day: date.getDate(),
-        month: date.getMonth(),
-        year: date.getFullYear(),
-      },
-    };
-  };
+Optionally, You can send a callback to perform an action on the response data. e.g:
 
-  client.entries.create(data, callback);
-  ```
-  The create method returns a promise with the response data from the tickspot API or with your custom output data handled with the callback.
+```javascript
+const params = {
+  startDate: "2021-11-08",
+  endDate: "2021-11-09",
+};
 
-- List
-
-  The list method returns a list of entries between two dates with the following data:
-  - startDate: required*
-  - endDate: required*
-  - user_id: will be ignored if the user is not an administrator
-
-  Optionally, you can add a callback to handle the response data from the tickspot API.
-
-  For example:
-  ```javascript
-  ...
-  const params = {
-    startDate: '2021-11-08',
-    endDate: '2021-11-09',
-  };
-
-  const callback = (dataResponse) => dataResponse.map((entry) => {
+const callback = (responseData) =>
+  responseData.map((entry) => {
     const date = new Date(entry.date);
-    return ({
+    return {
       id: entry.id,
       notes: entry.notes,
       day: date.getDate(),
       month: date.getMonth(),
       year: date.getFullYear(),
-    });
+    };
   });
 
-  client.entries.list(params, callback);
-  ```
-  The list method returns a promise with the response data from the tickspot API or with your custom output data handled with the callback.
-
-- getEntry
-
-   The getEntry method will return the specified entry information, this method needs:
-  - entryId: required*
-
-   Optionally, you can add a callback to handle the response data from the tickspot API.
-
-   For example:
-   ```javascript
+const result = await client.entries.list(params, callback);
+// The result would be something like the following:
+[
+  {
+    id: 1,
+    notes: 'Example Entry.',
+    day: 08,
+    month: 11,
+    year: 2021
+  }
   ...
-  const dataCallback = (dataResponse) => {
-   console.log(dataResponse);
-   };
+]
+```
 
-  client.entries.getEntry('100773532', dataCallback);
-  ```
-The getEntry method returns a promise with the response data from the tickspot API or with your custom output data handled with the callback.
+#### Get Entry
 
-- updateEntry
+This will return the specified entry info. This method needs the following params:
 
-   The updateEntry method will update the entry information from the parameters passed, this method needs:
-   - entryId: required*
-   - date:  optional. It does not allow update to future dates
-   - hours: optional. Time spent on this task.
-   - notes: optional. Entry description
-   - task_id: optional.
-   - user_id: optional. It will be ignored if the user is not an administrator
-   - billed: (boolean) optional. If it is true, the entry will be blocked
+- [Required] entryId, entry unique identificator.
 
-    Optionally, you can add a callback to handle the response data from the tickspot API.
+```javascript
+const result = await client.entries.getEntry(1);
 
-     For example:
-     ```javascript
-  ...
-  const dataCallback = (dataResponse) => {
-     console.log(dataResponse);
-   };
+// The result would be something like the following:
+{
+  id: 1,
+  date: '2021-11-08',
+  hours: 0.5,
+  notes: 'Example Task',
+  task_id: 1,
+  user_id: 1,
+  url: 'https://secure.tickspot.com/123/api/v2/entries/1.json',
+  created_at: '2021-11-08T08:46:26.000-05:00',
+  updated_at: '2021-11-08T08:46:26.000-05:00',
+  task: {
+    id: 1,
+    name: '2 - Development',
+    budget: null,
+    position: 2,
+    project_id: 1,
+    date_closed: null,
+    billable: true,
+    url: 'https://secure.tickspot.com/123/api/v2/tasks/1.json',
+    created_at: '2020-04-21T12:39:39.000-04:00',
+    updated_at: '2022-02-07T17:21:51.000-05:00'
+  }
+}
 
-   const data = {
-    entryId: '101152129',
-    date: '2022-01-20',
-    hours: 1,
-    notes: 'Update entry test',
-    taskId: 14541850,
-    userId: 337683,
-    billed: true,
+```
+
+Optionally, You can send a callback to perform an action on the response data. e.g:
+
+```javascript
+const callback = (responseData) => {
+  const date = new Date(responseData.date);
+  return {
+    id: responseData.id,
+    notes: responseData.notes,
+    day: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear(),
   };
+};
 
-  client.entries.updateEntry(data, dataCallback);
+const result = await client.entries.getEntry(1, callback);
 
- The updateEntry method returns a promise with the response data from the tickspot API or with your custom   output data handled with the callback.
+// The result would be something like the following:
+{
+  id: 1,
+  notes: 'Example Task.',
+  day: 8,
+  month: 11,
+  year: 2021
+}
 
-- deleteEntry
-  The deleteEntry method will delete the entry, this method needs:
-  - entryId: required*
+```
 
-   Optionally, you can add a callback to handle the response data from the tickspot API.
+#### Create an Entry
 
-   For example:
+This method allows you to create a new entry on tickspot. The params you can send are the following:
 
-  ```javascript
+- [Required] taskId, parent task related.
+- [Optional] date, if not sent it will take the current date. The format is: 'YYYY-MM-DD'.
+- [Required] hours, time spent on this entry.
+- [Optional] notes, entry description.
+- [Optional] userId, will be ignored if the user is not an administrator.
+
+The create method returns a promise with the response data from the tickspot API.
+
+```javascript
+const data = {
+  date: "2021-11-08",
+  hours: 2,
+  notes: "Entry description",
+  taskId: 12345678,
+};
+
+const result = await client.entries.create(data);
+
+// The result would be something like the following:
+{
+  date: "2021-11-08",
+  hours: 1.5,
+  notes: "Entry description",
+  task_id: 12345678,
+  user_id: 1,
+  created_at: '2021-11-08T17:40:11.000-05:00',
+  updated_at: '2021-11-08T17:41:00.000-05:00'
+}
+```
+
+Optionally, You can send a callback to perform an action on the response data. e.g:
+
+```javascript
+const data = {
+  date: "2021-12-01",
+  hours: 2,
+  notes: "Entry description",
+  taskId: 12345678,
+};
+
+const callback = (responseData) => {
+  const date = new Date(responseData.date);
+  return {
+    entryDate: {
+      day: date.getDate(),
+      month: date.getMonth(),
+      year: date.getFullYear(),
+    },
+  };
+};
+
+const result = await client.entries.create(data, callback);
+
+// The result would be something like the following:
+{
+  entryDate: {
+    day: 08,
+    moth: 11,
+    year: 2021
+  }
+}
+```
+
+#### Update Entry
+
+This method will update the entry information from the parameters passed. The params you can send are the following:
+
+- [Required] entryId, entry unique identificator.
+- [Optional] date, it does not allow update to future dates. The format is: 'YYYY-MM-DD'.
+- [Optional] hours, time spent on this entry.
+- [Optional] notes, entry description.
+- [Optional] taskId, related parent task.
+- [Optional] userId, will be ignored if the user is not an administrator.
+- [Optional] billable.
+- [Optional] billed. If it is true, the entry will be blocked
+
+```javascript
+const data = {
+  entryId: 1,
+  date: "2022-01-22",
+  hours: 1,
+  notes: "Update entry test",
+  taskId: 12345678,
+  userId: 2,
+  billed: true,
+};
+
+const result = await client.entries.updateEntry(data);
+
+// The result would be something like the following:
+{
+  id: 1,
+  date: '2022-01-22',
+  hours: 1,
+  notes: 'Update entry test',
+  task_id: 12345678,
+  user_id: 2,
+  url: 'https://secure.tickspot.com/123/api/v2/entries/1.json',
+  created_at: '2022-02-07T17:40:11.000-05:00',
+  updated_at: '2022-02-07T17:41:00.000-05:00'
+}
+```
+
+Optionally, You can send a callback to perform an action on the response data. e.g:
+
+```javascript
+const callback = (responseData) => {
+  const date = new Date(responseData.date);
+  return {
+    id: responseData.id,
+    notes: responseData.notes,
+    day: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear(),
+  };
+};
+
+const data = {
+  entryId: "101152129",
+  date: "2022-01-20",
+  hours: 1,
+  notes: "Update entry test",
+  taskId: 14541850,
+  userId: 337683,
+  billed: true,
+};
+
+const result = await client.entries.updateEntry(data, callback);
+// The result would be something like the following:
+{
+  id: 1,
+  notes: 'Update entry test',
+  day: 22,
+  moth: 1,
+  year: 2022,
+}
+```
+
+#### Delete Entry
+
+This method will delete the entry. The params you can send are the following:
+
+- [Required] entryId, entry unique identificator.
+
+```javascript
+const result = await client.entries.deleteEntry("100773532");
+
+// The result will be true if task was deleted
+```
+
+### Tasks
+
+This module allows you to interact with the Tickspot tasks.
+
+#### List Closed Tasks
+
+This method will return all closed tasks across all projects.
+
+```javascript
+const result = await client.tasks.listClosed();
+
+// The result would be something like the following:
+[
+  {
+    id: 1,
+    name: "Example Task",
+    budget: 14.0,
+    position: 1,
+    project_id: 16,
+    date_closed: "2021-11-08",
+    billable: true,
+    url: "https://www.tickspot.com/api/v2/123/tasks/1.json",
+    created_at: "2021-11-08T15:03:18.000-04:00",
+    updated_at: "2021-11-08T15:03:18.000-04:00"
+  },
   ...
-  const dataCallback = (dataResponse) => {
-     console.log(dataResponse);
-   };
+]
+```
 
-  client.entries.deleteEntry('100773532', dataCallback);
+Optionally, You can send a callback to perform an action on the response data. e.g:
 
-The deleteEntry method returns true if the entry was deleted or some error about API  response or if any mandatory field is missing.
+```javascript
+const callback = (responseData) => {
+  const date = new Date(responseData.date_closed);
+  return {
+    id: responseData.id,
+    name: responseData.name,
+    budget: `${responseData.budget}`
+    day: date.getDate(),
+    month: date.getMonth(),
+    year: date.getFullYear(),
+  };
+};
 
-## Development
+const result = await client.tasks.listClosed(callback);
+
+// The result would be something like the following:
+[
+  {
+    id: 1,
+    name: "Example Task",
+    budget: "$14.0",
+    day: 08,
+    month: 11,
+    year: 2021
+  },
+  ...
+]
+```
 
 ## Code of conduct
+
 We welcome everyone to contribute. Make sure you have read the [CODE_OF_CONDUCT][coc] before.
 
 ## Contributing
+
 For information on how to contribute, please refer to our [CONTRIBUTING][contributing] guide.
 
 ## Changelog
+
 Features and bug fixes are listed in the [CHANGELOG][changelog] file.
 
 ## License
+
 This library is licensed under an MIT license. See [LICENSE][license] for details.
 
 ## Acknowledgements
+
 Made with 💙 by [kommitters Open Source](https://kommit.co)
 
 [license]: https://github.com/kommitters/tickspot.js/blob/main/LICENSE
