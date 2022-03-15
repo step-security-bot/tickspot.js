@@ -68,7 +68,7 @@ class Projects extends BaseResource {
    *
    * @returns {object} project info or an error if the process fails.
    */
-  async updateProject({
+  async update({
     projectId,
     name,
     clientId,
@@ -95,6 +95,19 @@ class Projects extends BaseResource {
     return this.makeRequest({
       URL, method: 'put', body, responseCallback,
     });
+  }
+
+  /**
+   * This will will delete the project.
+   * @param {Number} projectId, project unique identificator.
+   * The project and all time entries will be immediately deleted
+   * @returns {Boolean} true if the project was deleted or an error if the process fails.
+   */
+  async delete(projectId) {
+    if (!projectId) throw new Error('projectId field is missing');
+
+    const URL = `${this.baseURL}/projects/${projectId}.json`;
+    return this.makeRequest({ URL, method: 'delete' });
   }
 
   /**

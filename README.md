@@ -818,7 +818,7 @@ const data = {
   recurring: false,
 };
 
-const result = await client.projects.updateProject(data);
+const result = await client.projects.update(data);
 // The result would be something like the following:
 {
   id: 2210008,
@@ -856,10 +856,25 @@ const data = {
   recurring: false,
 };
 
-const result = await client.projects.updateProject(data, callback);
+const result = await client.projects.update(data, callback);
 // The result would be something like the following:
 { name: 'test #1', budget: 40 }
 ````
+
+#### Delete Project
+
+This method will delete a specific project. The params you can send are the following:
+- [Required] projectId, the project unique identificator.
+
+**Warning**: The project and all time entries will be immediately deleted
+
+```javascript
+const result = await client.projects.delete(123456);
+
+// The result will be true if the project was deleted
+```
+
+
 #### List All Opened Projects
 
 This method will return all opened projects. This method needs the following params:
