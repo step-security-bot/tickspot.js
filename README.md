@@ -1418,6 +1418,53 @@ const result = await client.users.listEntries(params, callback);
 
 This module allows you to interact with the Tickspot clients.
 
+#### Create Client
+
+This method will create a new client from the parameters passed. It is strictly limited to administrators.
+
+This method will return the new client info. This method needs the following params:
+
+- [Required] name, name of the client
+- [Optional] archive
+
+```javascript
+const data = {
+  name: 'test #1',
+  archive: false,
+};
+
+const result = await client.clients.create(data);
+
+// The result would be something like the following:
+{
+  id: 123,
+  name: 'test #1',
+  archive: false,
+  updated_at: '2022-03-08T17:29:02.000-05:00'
+}
+```
+
+Optionally, You can send a callback to perform an action on the response data. e.g:
+
+```javascript
+const callback = (responseData) => {
+  return {
+    name: responseData.name,
+    archive: responseData.archive
+  };
+};
+
+const data = {
+  name: 'test #1',
+  archive: false,
+};
+
+const result = await client.clients.create(data, callback);
+
+// The result would be something like the following:
+{ name: 'test #1', archive: false }
+```
+
 #### List All Clients
 
 This method will return all the clients that have opened projects. This method needs the following params:

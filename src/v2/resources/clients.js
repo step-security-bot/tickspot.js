@@ -5,6 +5,34 @@ import BaseResource from '#src/v2/baseResource';
  */
 class Clients extends BaseResource {
   /**
+   * This method will create a new client, it is strictly limited to administrators.
+   * @param {object} Client contains the params to create the client.
+   *    [Required] name
+   *    [Optional] archive
+
+   * @param {callback} responseCallback
+   *    is an optional function to perform a process over the response data.
+   *
+   * @return {Object} a object with created client data.
+   */
+  async create({
+    name,
+    archive,
+  }, responseCallback) {
+    if (!name) throw new Error('name field is missing');
+
+    const body = {
+      name,
+      ...(typeof archive === 'boolean' && { archive }),
+    };
+
+    const URL = `${this.baseURL}/clients.json`;
+    return this.makeRequest({
+      URL, method: 'post', body, responseCallback,
+    });
+  }
+
+  /**
    * This method will return all the clients that have opened projects.
    * @param {Number} page, the first page returns
    *     up to 100 records and you can check the next page for more results
