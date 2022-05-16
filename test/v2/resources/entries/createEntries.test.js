@@ -2,7 +2,7 @@ import axios from 'axios';
 import tickspot from '#src/index';
 import responseFactory from '#test/v2/factories/responseFactory';
 import userInfo from '#test/v2/fixture/client';
-import successfulResponseData from '#test/v2/fixture/entries/createResponseData.js';
+import successfulResponseData from '#test/v2/fixture/entries/createEntryFixture';
 import authenticationErrorTests from '#test/v2/shared/authentication';
 import {
   badResponseCallbackTests,
@@ -14,7 +14,7 @@ jest.mock('axios');
 const client = tickspot({ apiVersion: 2, ...userInfo });
 const URL = `${client.baseURL}/entries.json`;
 
-describe('createTickEntries', () => {
+describe('#create', () => {
   const entryData = {
     date: '2021-11-08',
     hours: 2,

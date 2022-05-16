@@ -1,7 +1,7 @@
 import axios from 'axios';
 import tickspot from '#src/index';
 import userInfo from '#test/v2/fixture/client';
-import successfulResponseData from '#test/v2/fixture/entries/listEntriesResponseData';
+import successfulResponseData from '#test/v2/fixture/entries/listEntriesFixture';
 import responseFactory from '#test/v2/factories/responseFactory';
 import authenticationErrorTests from '#test/v2/shared/authentication';
 import {
@@ -14,7 +14,7 @@ jest.mock('axios');
 const client = tickspot({ apiVersion: 2, ...userInfo });
 const URL = `${client.baseURL}/entries.json`;
 
-describe('listTickEntries', () => {
+describe('#list', () => {
   const params = {
     startDate: '2021-11-08',
     endDate: '2021-11-09',
