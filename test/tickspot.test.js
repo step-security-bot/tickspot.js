@@ -1,15 +1,15 @@
-import tickspot from '#src/index';
-import userInfo from '#test/v2/fixture/client';
+import Tickspot from '#src/index';
+import credentials from '#test/v2/fixture/credentials';
 import Client from '#src/v2/client';
 
-describe('tickspot', () => {
+describe('Tickspot.init', () => {
   it('when the tickspot method returns the client', () => {
-    const client = tickspot({ apiVersion: 2, ...userInfo });
+    const client = Tickspot.init({ apiVersion: 2, ...credentials });
     expect(client).toBeInstanceOf(Client);
   });
 
   it('when the api version is not available', () => {
-    const client = tickspot({ apiVersion: 3, ...userInfo });
+    const client = Tickspot.init({ apiVersion: 3, ...credentials });
     expect(client).toEqual(Error('The version is not available'));
   });
 });
