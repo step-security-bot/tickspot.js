@@ -1,4 +1,4 @@
-## 0.1.0 (22.06.2022)
+## 0.1.0 (04.08.2022)
 
 Initial release. This includes:
 - [Entries module](docs/entries.md)
