@@ -19,9 +19,9 @@ A clear and concise description of what the bug is.
 
 ### Environment
 
-* Editor.js version:
-* Plugins you use with their versions:
-* Device, Browser, OS:
+* Node.js version:
+* Tick API version:
+* Operating system:
 
 ### Current behavior
 
