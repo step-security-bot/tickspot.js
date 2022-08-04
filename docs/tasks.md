@@ -133,7 +133,7 @@ This method will return the specified task. This method needs the following para
 - [Required] taskId, task unique identificator.
 
 ```javascript
-const result = await tickspot.tasks.getTask(1);
+const result = await tickspot.tasks.get(1);
 
 // The result would be something like the following:
 {
@@ -185,7 +185,7 @@ const callback = (responseData) => {
   };
 };
 
-const result = await tickspot.tasks.getTask(1, callback);
+const result = await tickspot.tasks.get(1, callback);
 
 // The result would be something like the following:
 {
@@ -208,13 +208,14 @@ This method will create a new task from the parameters passed. The params you ca
 - [Optional] billable.
 - [Optional] dateClosed, the format is: 'YYYY-MM-DD'.
 
+**Note:** If you try to create a task with the same name as another task in the project, you will receive error code `422 Unprocessable Entity`.
+
 ```javascript
 const data = {
   name: 'New task test',
   projectId: 7890,
   budget: null,
-  billable: false,
-  dateClosed: '2022-01-20',
+  billable: false
 };
 const result = await tickspot.tasks.create(data);
 // The result would be something like the following:
@@ -224,7 +225,7 @@ const result = await tickspot.tasks.create(data);
   budget: null,
   position: 25,
   project_id: 7890,
-  date_closed: '2022-01-20',
+  date_closed: null,
   billable: false,
   url: 'https://secure.tickspot.com/7890/api/v2/tasks/123456.json',
   created_at: '2022-02-08T20:41:50.000-05:00',
@@ -269,6 +270,8 @@ This method will update the task information from the parameters passed. The par
 - [Optional] position.
 - [Optional] projectId, project unique identificator.
 - [Optional] dateClosed, the format is: 'YYYY-MM-DD'.
+
+**Note:** If you try to update a task with the same name as another task in the project, you will receive error code `422 Unprocessable Entity`.
 
 ```javascript
 const data = {
@@ -369,6 +372,7 @@ const result = await tickspot.tasks.listEntries(params);
     task_id: 123,
     user_id: 4,
     url: "https://www.tickspot.com/api/v2/123/entries/1.json",
+    locked: false,
     created_at: "2021-11-08T15:03:19.000-04:00",
     updated_at: "2021-11-08T15:03:19.000-04:00"
   },

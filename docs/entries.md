@@ -89,7 +89,7 @@ This will return the specified entry info. This method needs the following param
 - [Required] entryId, entry unique identificator.
 
 ```javascript
-const result = await tickspot.entries.getEntry(1);
+const result = await tickspot.entries.get(1);
 
 // The result would be something like the following:
 {
@@ -132,7 +132,7 @@ const callback = (responseData) => {
   };
 };
 
-const result = await tickspot.entries.getEntry(1, callback);
+const result = await tickspot.entries.get(1, callback);
 
 // The result would be something like the following:
 {
@@ -150,10 +150,10 @@ const result = await tickspot.entries.getEntry(1, callback);
 This method allows you to create a new entry on tickspot. The params you can send are the following:
 
 - [Required] taskId, parent task related.
-- [Optional] date, if not sent it will take the current date. The format is: 'YYYY-MM-DD'.
+- [Required] userId, **will be ignored if the user is not an administrator**.
 - [Required] hours, time spent on this entry.
+- [Optional] date, if not sent it will take the current date. The format is: 'YYYY-MM-DD'.
 - [Optional] notes, entry description.
-- [Optional] userId, will be ignored if the user is not an administrator.
 
 The create method returns a promise with the response data from the tickspot API.
 
@@ -163,6 +163,7 @@ const data = {
   hours: 2,
   notes: "Entry description",
   taskId: 12345678,
+  userId: 212
 };
 
 const result = await tickspot.entries.create(data);
@@ -187,6 +188,7 @@ const data = {
   hours: 2,
   notes: "Entry description",
   taskId: 12345678,
+  userId: 212
 };
 
 const callback = (responseData) => {
@@ -236,7 +238,7 @@ const data = {
   billed: true,
 };
 
-const result = await tickspot.entries.updateEntry(data);
+const result = await tickspot.entries.update(data);
 
 // The result would be something like the following:
 {
@@ -247,6 +249,7 @@ const result = await tickspot.entries.updateEntry(data);
   task_id: 12345678,
   user_id: 2,
   url: 'https://secure.tickspot.com/123/api/v2/entries/1.json',
+  locked: true,
   created_at: '2022-02-07T17:40:11.000-05:00',
   updated_at: '2022-02-07T17:41:00.000-05:00'
 }
@@ -276,7 +279,7 @@ const data = {
   billed: true,
 };
 
-const result = await tickspot.entries.updateEntry(data, callback);
+const result = await tickspot.entries.update(data, callback);
 // The result would be something like the following:
 {
   id: 1,

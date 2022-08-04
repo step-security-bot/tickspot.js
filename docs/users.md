@@ -21,7 +21,9 @@ const result = await tickspot.users.list();
     last_name: "Skywalker",
     email: "user@tickspot.com",
     timezone: "Hawaii",
+    created_at: "2014-11-19T12:53:46.000-05:00",
     updated_at: "2014-11-19T12:53:46.000-05:00",
+    billable_rate: 0
   },
   {
     id: 1,
@@ -29,7 +31,9 @@ const result = await tickspot.users.list();
     last_name: "Skywalker",
     email: "owner@tickspot.com",
     timezone: "Hawaii",
+    created_at: "2015-01-30T15:13:44.000-05:00",
     updated_at: "2015-01-30T15:13:44.000-05:00",
+    billable_rate: 0
   },
 ];
 ```
@@ -77,6 +81,7 @@ const result = await tickspot.users.listDeleted();
     last_name: "Vader",
     email: "dv@tickspot.com",
     timezone: "Death Star",
+    created_at: "2014-11-19T12:53:46.000-05:00",
     updated_at: "2014-11-19T12:53:46.000-05:00",
   },
 ];
@@ -136,6 +141,7 @@ const result = await tickspot.users.listEntries(params);
     task_id: 123,
     user_id: 4,
     url: "https://www.tickspot.com/api/v2/123/entries/1.json",
+    locked: false,
     created_at: "2021-11-08T15:03:19.000-04:00",
     updated_at: "2021-11-08T15:03:19.000-04:00"
   },

@@ -62,7 +62,7 @@ This will return the specified client along with a summary of project informatio
 - [Required] clientId, client unique identificator.
 
 ```javascript
-const result = await tickspot.clients.getClient(123);
+const result = await tickspot.clients.get(123);
 // The result would be something like the following:
 {
   id: 123,
@@ -87,7 +87,7 @@ const callback = (responseData) => {
   };
 };
 
-const result = await tickspot.clients.getClient(123, callback);
+const result = await tickspot.clients.get(123, callback);
 // The result would be something like the following:
 { id: 123, name: 'Client #1' }
 ```
