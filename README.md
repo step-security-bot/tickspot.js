@@ -1,4 +1,6 @@
 # Tickspot.js
+[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/6472/badge)](https://bestpractices.coreinfrastructure.org/projects/6472)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/kommitters/tickspot.js/badge)](https://api.securityscorecards.dev/projects/github.com/kommitters/tickspot.js)
 
 Tickspot.js is a Node.js client for [tickspot api](https://github.com/tick/tick-api).
 
