@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 (28.10.2022)
+
+- Add Coverage Report with Coveralls
+
 ## 0.1.1 (13.09.2022)
 
 - Add scorecards workflow
