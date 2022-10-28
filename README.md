@@ -1,4 +1,5 @@
 # Tickspot.js
+[![Coverage Status](https://coveralls.io/repos/github/kommitters/tickspot.js/badge.svg)](https://coveralls.io/github/kommitters/tickspot.js)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/6472/badge)](https://bestpractices.coreinfrastructure.org/projects/6472)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/kommitters/tickspot.js/badge)](https://api.securityscorecards.dev/projects/github.com/kommitters/tickspot.js)
 
